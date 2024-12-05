@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Sertaneja</title>
+    <style>
+        /* Estilos para o fundo preto e texto branco */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .playlist {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        .playlist li {
+            padding: 10px;
+            border-bottom: 1px solid #444;
+        }
+
+        .playlist li:last-child {
+            border-bottom: none;
+        }
+
+        .form-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            width: 300px;
+            border: 2px solid #fff;
+            background-color: #333;
+            color: #fff;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #444;
+            color: #fff;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            margin-top: 40px;
+        }
+
+        /* Estilos dos links */
+        a {
+            color: #00bfff; /* Cor azul clara */
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #32cd32; /* Cor verde quando passar o mouse */
+            text-decoration: underline;
+        }
+
+        /* Estilo para o iframe (vídeo) */
+        #videoContainer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        iframe {
+            width: 80%;
+            height: 400px;
+            border: none;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Playlist Sertaneja</h1>
+    </header>
+
+    <div class="form-container">
+        <input type="text" id="songInput" placeholder="Adicione uma música à playlist...">
+        <button onclick="addSong()">Adicionar</button>
+    </div>
+
+    <ul class="playlist" id="playlist">
+        <!-- Músicas de Jorge & Mateus, Henrique & Juliano, e Matheus & Kauan com links -->
+        <li>
+            <a href="javascript:void(0);" onclick="playVideo('5qVwmdjeLPs')">
+                Jorge & Mateus - "Pode Chorar"
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" onclick="playVideo('BX7_gwV2SMw')">
+                Henrique & Juliano - "Cuida Bem Dela"
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" onclick="playVideo('fBoDeB2Kw_4')">
+                Matheus & Kauan - "O Nosso Santo Bateu"
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" onclick="playVideo('F-NFzTLt0jY')">
+                Jorge & Mateus - "Amo Noite e Dia"
+            </a>
+        </li>
+        <li>
+            <a href="javascript:void(0);" onclick="playVideo('VpVZ6F06R0g')">
+                Henrique & Juliano - "Quem Pegou, Pegou"
+            </a>
+        </li>
+    </ul>
+
+    <div id="videoContainer">
+        <!-- O iframe para o vídeo será inserido aqui -->
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Playlist Sertaneja. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Função para adicionar músicas à playlist
+        function addSong() {
+            const input = document.getElementById("songInput");
+            const songName = input.value.trim();
+
+            if (songName) {
+                const playlist = document.getElementById("playlist");
+                const li = document.createElement("li");
+                
+                // A ideia é também pedir o link da música ao adicionar
+                const link = prompt("Por favor, insira o link da música no YouTube:");
+
+                if (link) {
+                    const videoId = getYouTubeVideoId(link);
+                    if (videoId) {
+                        const a = document.createElement("a");
+                        a.href = "javascript:void(0);";
+                        a.onclick = function() { playVideo(videoId); };
+                        a.textContent = songName;
+                        li.appendChild(a);
+                        playlist.appendChild(li);
+                        input.value = ""; // Limpar o campo de texto
+                    } else {
+                        alert("Não foi possível extrair o ID do vídeo. Verifique o link!");
+                    }
+                } else {
+                    alert("Por favor, insira o link da música!");
+                }
+            } else {
+                alert("Por favor, insira o nome de uma música!");
+            }
+        }
+
+        // Função para extrair o ID do vídeo do YouTube a partir do link
+        function getYouTubeVideoId(url) {
+            const regex = /(?:https?:\/\/(?:www\.)?youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/)([a-zA-Z0-9_-]{11}))/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        // Função para exibir o vídeo quando um link for clicado
+        function playVideo(videoId) {
+            const videoContainer = document.getElementById("videoContainer");
+
+            // Cria o iframe do vídeo
+            const iframe = document.createElement("iframe");
+            iframe.src = `https://www.youtube.com/embed/${videoId}`;
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+
+            // Limpa o conteúdo do contêiner e adiciona o iframe
+            videoContainer.innerHTML = ''; // Limpar o conteúdo anterior
+            videoContainer.appendChild(iframe);
+        }
+    </script>
+</body>
+</html>
